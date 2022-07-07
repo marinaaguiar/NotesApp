@@ -9,7 +9,7 @@ class NotesListViewModel: NotesListViewModelProtocol {
     private var notes: [Note]?
 
     // MARK: Services
-    private let storageService = DataController(persistentContainer: .mooskineNotebook)
+    private let storageService = DataController(persistentContainer: .notesApp)
 
     init(delegate: NotesListViewModelDelegate?) {
         self.delegate = delegate
@@ -27,6 +27,26 @@ class NotesListViewModel: NotesListViewModelProtocol {
             }
         }
     }
+
+
+    func saveNewNote(name: String) {
+        do {
+            try storageService.performContainerAction { container in
+                let context = container.viewContext
+
+                // Create a Note object
+                let newNote = Note(context: context)
+//                newNote.attributedText = name
+                newNote.creationDate = Date()
+                // Save the data
+                context.insert(newNote)
+                try context.save()
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
 
     func refreshItems() {
         let request: NSFetchRequest<Note> = Note.fetchRequest()

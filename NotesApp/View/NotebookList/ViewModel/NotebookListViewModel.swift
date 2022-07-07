@@ -6,23 +6,49 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
 
     private weak var delegate: NotebookListViewModelDelegate?
     private var notebooks: [Notebook]?
+    internal var isSortingByOldest: Bool = false
 
     // MARK: Services
-    private let storageService = DataController(persistentContainer: .mooskineNotebook)
+    private let storageService = DataController(persistentContainer: .notesApp)
+
+    private var date = { (date: Date?) -> String in
+        guard let date = date else {
+            print("Unable to get the date")
+            return ""
+        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm - MMM d, yyyy"
+        let dateString = dateFormatter.string(from: date)
+        return dateString
+    }
+
+    private var pageCount = { (page: Int?) -> String in
+        guard let count = page else {
+            print("Unable to get the pageCount")
+            return ""
+        }
+        let pageString = count == 1 ? "page" : "pages"
+        let pageCountString = "\(count) \(pageString)"
+        return pageCountString
+    }
 
     init(delegate: NotebookListViewModelDelegate?) {
         self.delegate = delegate
+    }
+
+    func switchSortingCondition(to sortByOldest: Bool) {
+        isSortingByOldest = sortByOldest
     }
 
     func initializeCoreData() {
         storageService.loadPersistentStores { result in
             switch result {
             case .success:
-                print("loaded stores successfully")
+                print("Loaded stores successfully")
                 //Get Notebooks from Core Data
                 self.refreshItems()
             case .failure:
-                print("failed to load stores, gosh darn it.")
+                print("Failed to load stores")
             }
         }
     }
@@ -48,7 +74,7 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
     func refreshItems() {
         let request: NSFetchRequest<Notebook> = Notebook.fetchRequest()
 
-        let sort = NSSortDescriptor(key: "creationDate", ascending: false)
+        let sort = NSSortDescriptor(key: "creationDate", ascending: isSortingByOldest)
         request.sortDescriptors = [sort]
 
         do {
@@ -75,34 +101,11 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
 
         let notebook = notebooks[indexPath]
         let notebookName = notebook.name
-        let notebookCreationDate = "Created at \(convertDateToString(date: notebook.creationDate))"
-        let notebookPageCount = convertPageToString(for: notebook.notes?.count )
+        let notebookCreationDate = "Created at \(date(notebook.creationDate))"
+        let notebookPageCount = pageCount(notebook.notes?.count)
 
         return NotebookCell(notebookName: notebookName!, creationDate: notebookCreationDate, pageCount: notebookPageCount)
     }
-
-    func convertDateToString(date: Date?) -> String{
-
-        guard let date = date else {
-            print("Unable to get the date")
-            return ""
-        }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm - MMM d, yyyy"
-        let dateString = dateFormatter.string(from: date)
-        return dateString
-    }
-
-    func convertPageToString(for pageCount: Int?) -> String {
-        guard let count = pageCount else {
-            print("Unable to get the pageCount")
-            return ""
-        }
-        let pageString = count == 1 ? "page" : "pages"
-        let pageCountString = "\(count) \(pageString)"
-        return pageCountString
-    }
-
 
     func deleteNotebook(atIndexPath indexPath: IndexPath) {
 

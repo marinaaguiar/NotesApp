@@ -8,6 +8,7 @@ class NotebookListViewController: UIViewController {
 
     // MARK: Table
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var sortingButton: UIBarButtonItem!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,8 +26,20 @@ class NotebookListViewController: UIViewController {
         present(alert, animated: true)
     }
 
+    @IBAction func sortButtonPressed(_ sender: UIBarButtonItem) {
+        if viewModel.isSortingByOldest == false {
+            sortingButton.tintColor = .gray
+            viewModel.switchSortingCondition(to: true)
+            viewModel.initializeCoreData()
+        } else {
+            sortingButton.tintColor = .systemBlue
+            viewModel.switchSortingCondition(to: false)
+            viewModel.initializeCoreData()
+        }
+    }
+
     func setup() {
-        title = "Notebook"
+        title = "Notebooks"
 //        tableView.register(NotebookViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
@@ -35,7 +48,7 @@ class NotebookListViewController: UIViewController {
     func buildNotebookNameAlert(onSave: @escaping (String?) -> Void) -> UIAlertController {
         let alert = UIAlertController(
             title: "New Notebook 📕",
-            message: "Create a new notebook name",
+            message: "Create a new notebook title",
             preferredStyle: .alert
         )
 
@@ -52,7 +65,7 @@ class NotebookListViewController: UIViewController {
     }
 
     func buildDeleteAlert(onDelete: @escaping () -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: "Delete Note", message: "Are you sure you want to delete this note permanently?", preferredStyle: .alert
+        let alert = UIAlertController(title: "Delete Note 👀", message: "Are you sure you want to delete this note permanently?", preferredStyle: .alert
         )
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -73,7 +86,6 @@ class NotebookListViewController: UIViewController {
         cell.accessoryType = .disclosureIndicator
         return cell
     }
-
 }
 
     //MARK: - TaleViewDataSource

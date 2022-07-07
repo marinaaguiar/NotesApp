@@ -10,7 +10,7 @@ import CoreData
 
 struct DataController {
     enum PersistentContainer: String {
-        case mooskineNotebook = "MooskineNotebook"
+        case notesApp = "NotesApp"
     }
 
     private let persistentContainer: NSPersistentContainer

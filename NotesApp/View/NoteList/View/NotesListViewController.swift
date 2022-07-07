@@ -8,7 +8,7 @@ class NotesListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     // MARK: Services
-    let storageService = DataController(persistentContainer: .mooskineNotebook)
+    let storageService = DataController(persistentContainer: .notesApp)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,12 +19,37 @@ class NotesListViewController: UIViewController {
     }
 
     @IBAction func addNoteButtonPressed(_ sender: Any) {
-        
+        let alert = buildNoteNameAlert { text in
+            guard let noteName = text else { return }
+//            self.viewModel.saveNewNote(name: noteName)
+//            self.viewModel.refreshItems()
+        }
+        present(alert, animated: true)
     }
 
     func setup(_ notebook: String) {
         navigationItem.title = notebook
     }
+
+    func buildNoteNameAlert(onSave: @escaping (String?) -> Void) -> UIAlertController {
+        let alert = UIAlertController(
+            title: "New Note 📝",
+            message: "Create a new note title",
+            preferredStyle: .alert
+        )
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let saveAction = UIAlertAction(title: "Save", style: .default) { [weak alert] _ in
+            onSave(alert?.textFields?.first?.text)
+        }
+
+        alert.addTextField()
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+
+        return alert
+    }
+
 }
 
 extension NotesListViewController: UITableViewDataSource {
