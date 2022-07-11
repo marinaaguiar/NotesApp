@@ -2,14 +2,41 @@
 import UIKit
 import CoreData
 
+protocol NotesListViewModelProtocol: AnyObject {
+    func initializeCoreData()
+    func setNotebook(notebookID: NSManagedObjectID) -> Notebook
+    func saveNewNote()
+    func refreshItems()
+    func numberOfRows() -> Int
+    func fillCell(atIndexPath indexPath: Int) -> NoteCell
+    func getNotebook() -> Notebook
+}
+
+
+protocol NotesListViewModelDelegate: AnyObject {
+    func didLoad()
+    func displayNotes(noteID: NSManagedObjectID)
+}
+
 class NotesListViewModel: NotesListViewModelProtocol {
 
     private weak var delegate: NotesListViewModelDelegate?
-
+    private var notebook: Notebook!
     private var notes: [Note]?
 
+    private var date = { (date: Date?) -> String in
+        guard let date = date else {
+            print("Unable to get the date")
+            return ""
+        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "hh:mm a MMM d, yyyy"
+        let dateString = dateFormatter.string(from: date)
+        return dateString
+    }
+
     // MARK: Services
-    private let storageService = DataController(persistentContainer: .notesApp)
+    private let storageService = DataController.shared
 
     init(delegate: NotesListViewModelDelegate?) {
         self.delegate = delegate
@@ -28,16 +55,17 @@ class NotesListViewModel: NotesListViewModelProtocol {
         }
     }
 
-
-    func saveNewNote(name: String) {
+    func saveNewNote() {
         do {
             try storageService.performContainerAction { container in
                 let context = container.viewContext
 
                 // Create a Note object
                 let newNote = Note(context: context)
-//                newNote.attributedText = name
+                newNote.text = "New Note"
                 newNote.creationDate = Date()
+                newNote.notebook = notebook
+
                 // Save the data
                 context.insert(newNote)
                 try context.save()
@@ -47,9 +75,11 @@ class NotesListViewModel: NotesListViewModelProtocol {
         }
     }
 
-
     func refreshItems() {
         let request: NSFetchRequest<Note> = Note.fetchRequest()
+
+        let predicate = NSPredicate(format: "notebook = %@", notebook)
+        request.predicate = predicate
 
         let sort = NSSortDescriptor(key: "creationDate", ascending: false)
         request.sortDescriptors = [sort]
@@ -70,15 +100,36 @@ class NotesListViewModel: NotesListViewModelProtocol {
         return notes?.count ?? 0
     }
 
-    func fillCell(for cell: UITableViewCell,atIndexPath indexPath: Int) -> UITableViewCell {
+    func fillCell(atIndexPath indexPath: Int) -> NoteCell {
 
-        let note = self.notes![indexPath]
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm - MMM d, yyyy"
-        let dateString = dateFormatter.string(from: note.creationDate!)
-        cell.textLabel?.text = note.attributedText as? String
-        cell.detailTextLabel?.text = "Created at \(dateString)"
 
-        return cell
+        guard let notes = notes else {
+            return NoteCell(noteName: "", creationDate: "")
+        }
+
+        let note = notes[indexPath]
+        let noteName = note.text
+        let noteCreationDate = date(note.creationDate)
+
+        return NoteCell(noteName: noteName, creationDate: noteCreationDate)
+    }
+
+    func setNotebook(notebookID: NSManagedObjectID) -> Notebook {
+        try! storageService.performContainerAction { container in
+            let context = container.viewContext
+            let notebook = context.object(with: notebookID) as! Notebook
+
+            self.notebook = notebook
+        }
+
+        return notebook
+    }
+
+    func getNotebook() -> Notebook {
+        return notebook
+    }
+
+    func transporter(index: Int) -> String {
+        notes![index].text!
     }
 }

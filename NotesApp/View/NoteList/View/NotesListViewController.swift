@@ -1,5 +1,6 @@
 
 import UIKit
+import CoreData
 
 class NotesListViewController: UIViewController {
 
@@ -8,7 +9,7 @@ class NotesListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     // MARK: Services
-    let storageService = DataController(persistentContainer: .notesApp)
+    let storageService = DataController.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,41 +17,46 @@ class NotesListViewController: UIViewController {
         viewModel.initializeCoreData()
         tableView.dataSource = self
 //        tableView.delegate = self
+
+        navigationItem.rightBarButtonItem = editButtonItem
+
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     @IBAction func addNoteButtonPressed(_ sender: Any) {
-        let alert = buildNoteNameAlert { text in
-            guard let noteName = text else { return }
-//            self.viewModel.saveNewNote(name: noteName)
-//            self.viewModel.refreshItems()
-        }
-        present(alert, animated: true)
+        viewModel.saveNewNote()
+        viewModel.refreshItems()
     }
 
-    func setup(_ notebook: String) {
-        navigationItem.title = notebook
+    func setup(notebookID: NSManagedObjectID) {
+        let notebook = viewModel.setNotebook(notebookID: notebookID)
+        self.title = notebook.name
     }
 
-    func buildNoteNameAlert(onSave: @escaping (String?) -> Void) -> UIAlertController {
-        let alert = UIAlertController(
-            title: "New Note 📝",
-            message: "Create a new note title",
-            preferredStyle: .alert
-        )
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let saveAction = UIAlertAction(title: "Save", style: .default) { [weak alert] _ in
-            onSave(alert?.textFields?.first?.text)
-        }
-
-        alert.addTextField()
-        alert.addAction(saveAction)
-        alert.addAction(cancelAction)
-
-        return alert
+    func addNote() {
+        viewModel.saveNewNote()
+        viewModel.refreshItems()
     }
 
+    func cell(_ tableView: UITableView, indexPath: IndexPath, noteCell: NoteCell) -> UITableViewCell {
+
+        let cell = tableView.dequeCell(NoteViewCell.self, indexPath)
+        cell.fill(noteCell)
+        cell.accessoryType = .disclosureIndicator
+        return cell
+    }
+
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        tableView.setEditing(editing, animated: animated)
+    }
 }
+
+//MARK: - TableViewDelegate
 
 extension NotesListViewController: UITableViewDataSource {
 
@@ -60,10 +66,11 @@ extension NotesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        return viewModel.fillCell(for: cell, atIndexPath: indexPath.row)
+        return cell(tableView, indexPath: indexPath, noteCell: viewModel.fillCell(atIndexPath: indexPath.row))
     }
 }
+
+//MARK: - TableViewDelegate
 
 extension NotesListViewController: NotesListViewModelDelegate {
 
@@ -72,6 +79,10 @@ extension NotesListViewController: NotesListViewModelDelegate {
             guard let self = self else { return }
             self.tableView.reloadData()
         }
+    }
+
+    func displayNotes(noteID: NSManagedObjectID) {
+//        delegate?.displayNotes(noteID: noteID)
     }
 }
 

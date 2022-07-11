@@ -2,14 +2,30 @@
 import UIKit
 import CoreData
 
+protocol NotebookListViewModelProtocol: AnyObject {
+    var isSortingByOldest: Bool { get }
+    func switchSortingCondition(to sortByOldest: Bool)
+    func initializeCoreData()
+    func saveNewNotebook(name: String)
+    func deleteNotebook(atIndexPath indexPath: IndexPath)
+    func refreshItems()
+    func numberOfRows() -> Int
+    func fillCell(atIndexPath indexPath: Int) -> NotebookCell
+    func displayNotes(notebookID: NSManagedObjectID)
+    func objectID(forNoteAt index: Int) -> NSManagedObjectID?
+}
+
+protocol NotebookListViewModelDelegate: AnyObject {
+    func didLoad()
+    func displayNotes(notebookID: NSManagedObjectID)
+    func didLoadWithError()
+}
+
 class NotebookListViewModel: NotebookListViewModelProtocol {
 
     private weak var delegate: NotebookListViewModelDelegate?
     private var notebooks: [Notebook]?
     internal var isSortingByOldest: Bool = false
-
-    // MARK: Services
-    private let storageService = DataController(persistentContainer: .notesApp)
 
     private var date = { (date: Date?) -> String in
         guard let date = date else {
@@ -17,7 +33,7 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
             return ""
         }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm - MMM d, yyyy"
+        dateFormatter.dateFormat = "MMM d, yyyy"
         let dateString = dateFormatter.string(from: date)
         return dateString
     }
@@ -31,6 +47,9 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
         let pageCountString = "\(count) \(pageString)"
         return pageCountString
     }
+
+    // MARK: - Services
+    private let storageService = DataController.shared
 
     init(delegate: NotebookListViewModelDelegate?) {
         self.delegate = delegate
@@ -54,21 +73,21 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
     }
 
     func saveNewNotebook(name: String) {
-        do {
-            try storageService.performContainerAction { container in
-                let context = container.viewContext
+            do {
+                try storageService.performContainerAction { container in
+                    let context = container.viewContext
 
-                // Create a Note object
-                let newNotebook = Notebook(context: context)
-                newNotebook.name = name
-                newNotebook.creationDate = Date()
-                // Save the data
-                context.insert(newNotebook)
-                try context.save()
+                    // Create a Note object
+                    let newNotebook = Notebook(context: context)
+                    newNotebook.name = name
+                    newNotebook.creationDate = Date()
+                    // Save the data
+                    context.insert(newNotebook)
+                    try context.save()
+                }
+            } catch {
+                print(error.localizedDescription)
             }
-        } catch {
-            print(error.localizedDescription)
-        }
     }
 
     func refreshItems() {
@@ -104,7 +123,7 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
         let notebookCreationDate = "Created at \(date(notebook.creationDate))"
         let notebookPageCount = pageCount(notebook.notes?.count)
 
-        return NotebookCell(notebookName: notebookName!, creationDate: notebookCreationDate, pageCount: notebookPageCount)
+        return NotebookCell(notebookName: notebookName, creationDate: notebookCreationDate, pageCount: notebookPageCount)
     }
 
     func deleteNotebook(atIndexPath indexPath: IndexPath) {
@@ -123,11 +142,11 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
         }
     }
 
-    func displayNotes(notebook: String) {
-        delegate?.displayNotes(notebook: notebook)
+    func objectID(forNoteAt index: Int) -> NSManagedObjectID? {
+        return notebooks?[index].objectID
     }
 
-    func transporter(index: Int) -> String {
-        notebooks![index].name!
+    func displayNotes(notebookID: NSManagedObjectID) {
+        delegate?.displayNotes(notebookID: notebookID)
     }
 }

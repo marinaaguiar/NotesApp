@@ -12,9 +12,12 @@ class NotebookListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        viewModel.initializeCoreData()
         setup()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        viewModel.initializeCoreData()
     }
 
     @IBAction func addNotebookButtonPressed(_ sender: UIBarButtonItem) {
@@ -28,11 +31,11 @@ class NotebookListViewController: UIViewController {
 
     @IBAction func sortButtonPressed(_ sender: UIBarButtonItem) {
         if viewModel.isSortingByOldest == false {
-            sortingButton.tintColor = .gray
+            sortingButton.tintColor = .systemGray4
             viewModel.switchSortingCondition(to: true)
             viewModel.initializeCoreData()
         } else {
-            sortingButton.tintColor = .systemBlue
+            sortingButton.tintColor = .systemCyan
             viewModel.switchSortingCondition(to: false)
             viewModel.initializeCoreData()
         }
@@ -40,7 +43,6 @@ class NotebookListViewController: UIViewController {
 
     func setup() {
         title = "Notebooks"
-//        tableView.register(NotebookViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
     }
@@ -54,7 +56,11 @@ class NotebookListViewController: UIViewController {
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let saveAction = UIAlertAction(title: "Save", style: .default) { [weak alert] _ in
-            onSave(alert?.textFields?.first?.text)
+            if alert?.textFields?.first?.text != "" {
+                onSave(alert?.textFields?.first?.text)
+            } else {
+                onSave("New Notebook")
+            }
         }
 
         alert.addTextField()
@@ -119,7 +125,11 @@ extension NotebookListViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.displayNotes(notebook: viewModel.transporter(index: indexPath.row))
+        guard let notebookID = viewModel.objectID(forNoteAt: indexPath.row) else {
+            return
+        }
+
+        viewModel.displayNotes(notebookID: notebookID)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
@@ -136,10 +146,10 @@ extension NotebookListViewController: NotebookListViewModelDelegate {
         }
     }
 
-    func displayNotes(notebook: String) {
+    func displayNotes(notebookID: NSManagedObjectID) {
         let notesVC = storyboard?.instantiateViewController(withIdentifier: "NotesListViewController") as? NotesListViewController
         guard let notesVC = notesVC else { return }
-        notesVC.setup(notebook)
+        notesVC.setup(notebookID: notebookID)
         navigationController?.pushViewController(notesVC, animated: true)
     }
 

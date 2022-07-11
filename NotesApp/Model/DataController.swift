@@ -1,9 +1,3 @@
-//
-//  StorageService.swift
-//  MooskineNotebook
-//
-//  Created by Marina Aguiar on 7/1/22.
-//
 
 import Foundation
 import CoreData
@@ -13,9 +7,11 @@ struct DataController {
         case notesApp = "NotesApp"
     }
 
+    static let shared = Self.init(persistentContainer: .notesApp)
+
     private let persistentContainer: NSPersistentContainer
 
-    init(persistentContainer: PersistentContainer) {
+    private init(persistentContainer: PersistentContainer) {
         self.persistentContainer = NSPersistentContainer(name: persistentContainer.rawValue)
     }
 
@@ -42,3 +38,4 @@ struct DataController {
         return .success(())
     }
 }
+
