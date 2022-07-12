@@ -2,7 +2,7 @@
 import UIKit
 
 struct NoteCell {
-    let noteName: String
+    let noteTitle: String?
     let creationDate: String?
 }
 
@@ -11,7 +11,7 @@ class NoteViewCell: UITableViewCell {
     @IBOutlet weak var creationDateLabel: UILabel!
 
     func fill(_ cell: NoteCell) {
-        noteTitleLabel.text = cell.noteName
+        noteTitleLabel.text = cell.noteTitle
         creationDateLabel.text = cell.creationDate
     }
 }

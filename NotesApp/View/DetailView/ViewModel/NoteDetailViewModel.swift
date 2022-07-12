@@ -59,19 +59,18 @@ class NoteDetailViewModel: NoteDetailViewModelProtocol {
 
         do {
             try storageService.performContainerAction { container in
-                let context = container.viewContext
 
-                let newTextNote = Note(context: context)
-                newTextNote.attributedText = content.attributedText
-                context.insert(newTextNote)
+                let context = container.viewContext
+                note.attributedText = content.attributedText
                 try context.save()
             }
         } catch {
-            print(error.localizedDescription)
+            print("Error saving the note content \(error.localizedDescription)")
         }
     }
 
     func getNote() -> NSAttributedString {
+        print(note.attributedText?.string ?? "")
         return note.attributedText ?? NSAttributedString(string: "")
     }
 

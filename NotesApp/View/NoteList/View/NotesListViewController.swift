@@ -13,15 +13,16 @@ class NotesListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         tableView.dataSource = self
         tableView.delegate = self
         navigationItem.rightBarButtonItem = editButtonItem
+        updateEditButtonState()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         viewModel.initializeCoreData()
+        viewModel.refreshItems()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -39,11 +40,6 @@ class NotesListViewController: UIViewController {
         title = notebook.name
     }
 
-    func addNote() {
-        viewModel.saveNewNote()
-        viewModel.refreshItems()
-    }
-
     func cell(_ tableView: UITableView, indexPath: IndexPath, noteCell: NoteCell) -> UITableViewCell {
 
         let cell = tableView.dequeCell(NoteViewCell.self, indexPath)
@@ -53,7 +49,7 @@ class NotesListViewController: UIViewController {
     }
 
     func buildDeleteAlert(onDelete: @escaping () -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: "Delete Note 👀", message: "Are you sure you want to delete this note permanently?", preferredStyle: .alert
+        let alert = UIAlertController(title: "Delete Note", message: "Are you sure you want to delete this note permanently?", preferredStyle: .actionSheet
         )
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -70,6 +66,10 @@ class NotesListViewController: UIViewController {
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         tableView.setEditing(editing, animated: animated)
+    }
+
+    func updateEditButtonState() {
+        editButtonItem.isEnabled = viewModel.numberOfRows() == 0 ? false : true
     }
 }
 
@@ -123,6 +123,7 @@ extension NotesListViewController: NotesListViewModelDelegate {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.tableView.reloadData()
+            self.updateEditButtonState()
         }
     }
 

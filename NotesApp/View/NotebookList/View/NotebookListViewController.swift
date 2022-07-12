@@ -47,6 +47,18 @@ class NotebookListViewController: UIViewController {
         tableView.delegate = self
     }
 
+    func cell(_ tableView: UITableView, indexpath: IndexPath, notebookCell: NotebookCell) -> UITableViewCell {
+
+        let cell = tableView.dequeCell(NotebookViewCell.self, indexpath)
+        cell.fill(notebookCell)
+        cell.accessoryType = .disclosureIndicator
+        return cell
+    }
+}
+    //MARK: - Alerts
+
+extension NotebookListViewController {
+
     func buildNotebookNameAlert(onSave: @escaping (String?) -> Void) -> UIAlertController {
         let alert = UIAlertController(
             title: "New Notebook 📕",
@@ -71,7 +83,7 @@ class NotebookListViewController: UIViewController {
     }
 
     func buildDeleteAlert(onDelete: @escaping () -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: "Delete Notebook 👀", message: "Are you sure you want to delete this notebook permanently?", preferredStyle: .alert
+        let alert = UIAlertController(title: "All notes will be deleted.", message: "Are you sure you want to delete this notebook permanently?", preferredStyle: .actionSheet
         )
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -99,15 +111,6 @@ class NotebookListViewController: UIViewController {
         alert.addAction(cancelAction)
 
         return alert
-    }
-
-
-    func cell(_ tableView: UITableView, indexpath: IndexPath, notebookCell: NotebookCell) -> UITableViewCell {
-
-        let cell = tableView.dequeCell(NotebookViewCell.self, indexpath)
-        cell.fill(notebookCell)
-        cell.accessoryType = .disclosureIndicator
-        return cell
     }
 }
 

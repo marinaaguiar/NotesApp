@@ -11,12 +11,12 @@ class NoteDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.delegate = self
+        textView.attributedText = viewModel.getNote()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         viewModel.initializeCoreData()
-        textView.attributedText = viewModel.getNote()
     }
 
     @IBAction func trashButtonPressed(_ sender: UIBarButtonItem) {
@@ -31,9 +31,8 @@ class NoteDetailViewController: UIViewController {
 
 extension NoteDetailViewController: UITextViewDelegate {
 
-    func textViewDidEndEditing(_ textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView) {
         viewModel.saveNoteText(with: textView)
-        viewModel.refreshItems()
         print("savedItems")
     }
 

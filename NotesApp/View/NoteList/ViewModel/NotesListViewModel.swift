@@ -37,13 +37,13 @@ class NotesListViewModel: NotesListViewModelProtocol {
         return dateString
     }
 
-    private var noteTitle = { (noteText: String?) -> String in
-        guard let noteText = noteText else {
-            print("Unable to get the noteTitle")
+    private var noteTitleString = { (note: NSAttributedString?) -> String in
+        guard let note = note else {
+            print("Unable to get the date")
             return "New Note"
         }
-        let noteTitle = String(noteText.prefix(10))
-        return noteTitle
+        let noteTitle = note.string
+        return String(noteTitle)
     }
 
     // MARK: Services
@@ -73,7 +73,7 @@ class NotesListViewModel: NotesListViewModelProtocol {
                 
                 // Create a Note object
                 let newNote = Note(context: context)
-                newNote.attributedText = NSAttributedString(string: "New Note")
+                newNote.title = "New Note"
                 newNote.creationDate = Date()
                 newNote.notebook = notebook
 
@@ -113,14 +113,20 @@ class NotesListViewModel: NotesListViewModelProtocol {
 
     func fillCell(atIndexPath indexPath: Int) -> NoteCell {
         guard let notes = notes else {
-            return NoteCell(noteName: "", creationDate: "")
+            return NoteCell(noteTitle: "", creationDate: "")
         }
+        var noteTitle: String = ""
 
         let note = notes[indexPath]
-        let noteName = noteTitle(note.attributedText?.string)
+        if note.attributedText == nil {
+            noteTitle = "New Note"
+        } else {
+            noteTitle = noteTitleString(note.attributedText)
+        }
+
         let noteCreationDate = date(note.creationDate)
 
-        return NoteCell(noteName: noteName, creationDate: noteCreationDate)
+        return NoteCell(noteTitle: noteTitle, creationDate: noteCreationDate)
     }
 
     func setNotebook(notebookID: NSManagedObjectID) -> Notebook {
@@ -130,9 +136,9 @@ class NotesListViewModel: NotesListViewModelProtocol {
 
             self.notebook = notebook
         }
-
         return notebook
     }
+
     func deleteNotes(atIndexPath indexPath: IndexPath) {
 
         guard let notes = notes else { return }
@@ -169,3 +175,4 @@ class NotesListViewModel: NotesListViewModelProtocol {
         delegate?.displayNoteDetail(noteID: noteID)
     }
 }
+

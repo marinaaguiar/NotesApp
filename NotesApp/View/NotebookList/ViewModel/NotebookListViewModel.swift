@@ -71,24 +71,6 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
         }
     }
 
-    func saveNewNotebook(name: String) {
-            do {
-                try storageService.performContainerAction { container in
-                    let context = container.viewContext
-
-                    // Create a Note object
-                    let newNotebook = Notebook(context: context)
-                    newNotebook.name = name
-                    newNotebook.creationDate = Date()
-                    // Save the data
-                    context.insert(newNotebook)
-                    try context.save()
-                }
-            } catch {
-                print(error.localizedDescription)
-            }
-    }
-
     func refreshItems() {
         let request: NSFetchRequest<Notebook> = Notebook.fetchRequest()
 
@@ -123,6 +105,24 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
         let notebookPageCount = pageCount(notebook.notes?.count)
 
         return NotebookCell(notebookName: notebookName, creationDate: notebookCreationDate, pageCount: notebookPageCount)
+    }
+
+    func saveNewNotebook(name: String) {
+            do {
+                try storageService.performContainerAction { container in
+                    let context = container.viewContext
+
+                    // Create a Note object
+                    let newNotebook = Notebook(context: context)
+                    newNotebook.name = name
+                    newNotebook.creationDate = Date()
+                    // Save the data
+                    context.insert(newNotebook)
+                    try context.save()
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
     }
 
     func deleteNotebook(atIndexPath indexPath: IndexPath) {
