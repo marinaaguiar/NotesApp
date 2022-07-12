@@ -191,7 +191,9 @@
                             <constraint firstItem="Ca6-t2-7ss" firstAttribute="leading" secondItem="85G-Ak-0sj" secondAttribute="leading" id="zUy-Jw-2bA"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="zSS-EK-nsE"/>
+                    <navigationItem key="navigationItem" id="zSS-EK-nsE">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="z58-kL-gzS"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="UeQ-oQ-nO0" id="Nht-mU-NFz"/>
                     </connections>
@@ -199,6 +201,46 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7yX-fj-PcK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2411.594202898551" y="69.642857142857139"/>
+        </scene>
+        <!--Note Detail View Controller-->
+        <scene sceneID="1p4-1v-5Hl">
+            <objects>
+                <viewController storyboardIdentifier="NoteDetailViewController" id="fQW-ri-mW2" customClass="NoteDetailViewController" customModule="NotesApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5qw-fy-LTC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="sdfdsdfsfd" translatesAutoresizingMaskIntoConstraints="NO" id="gGv-nq-kOr">
+                                <rect key="frame" x="12" y="88" width="390" height="762"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="lK3-bE-yk3"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="lK3-bE-yk3" firstAttribute="trailing" secondItem="gGv-nq-kOr" secondAttribute="trailing" constant="12" id="15d-A6-fuk"/>
+                            <constraint firstItem="lK3-bE-yk3" firstAttribute="bottom" secondItem="gGv-nq-kOr" secondAttribute="bottom" constant="12" id="Av2-Ui-CAY"/>
+                            <constraint firstItem="gGv-nq-kOr" firstAttribute="top" secondItem="lK3-bE-yk3" secondAttribute="top" id="ET7-kJ-Sr5"/>
+                            <constraint firstItem="gGv-nq-kOr" firstAttribute="leading" secondItem="lK3-bE-yk3" secondAttribute="leading" constant="12" id="bYp-4u-uJF"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="YM5-Km-hFq">
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="rf3-iK-i6a">
+                            <connections>
+                                <action selector="trashButtonPressed:" destination="fQW-ri-mW2" id="sga-27-XxW"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="textView" destination="gGv-nq-kOr" id="z26-qr-cLr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0oK-b0-aZY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4405.7971014492759" y="69.642857142857139"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="aXE-ea-WsM">
@@ -236,9 +278,30 @@
             </objects>
             <point key="canvasLocation" x="1500.0000000000002" y="69.642857142857139"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="abM-R5-k4Q">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="RVf-DT-L3S" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="TRG-ya-SMg">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="fQW-ri-mW2" kind="relationship" relationship="rootViewController" id="Gry-ea-y16"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fcK-wi-5Qa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3495.652173913044" y="69.642857142857139"/>
+        </scene>
     </scenes>
     <resources>
         <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="121"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

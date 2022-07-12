@@ -71,7 +71,7 @@ class NotebookListViewController: UIViewController {
     }
 
     func buildDeleteAlert(onDelete: @escaping () -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: "Delete Note 👀", message: "Are you sure you want to delete this note permanently?", preferredStyle: .alert
+        let alert = UIAlertController(title: "Delete Notebook 👀", message: "Are you sure you want to delete this notebook permanently?", preferredStyle: .alert
         )
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -84,6 +84,23 @@ class NotebookListViewController: UIViewController {
 
         return alert
     }
+
+    func buildEditAlert(onEdit: @escaping (String?) -> Void) -> UIAlertController {
+        let alert = UIAlertController(title: "Edit Notebook Title", message: "", preferredStyle: .alert
+        )
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let saveAction = UIAlertAction(title: "Save", style: .default) { [weak alert] _ in
+            onEdit(alert?.textFields?.first?.text)
+        }
+
+        alert.addTextField()
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+
+        return alert
+    }
+
 
     func cell(_ tableView: UITableView, indexpath: IndexPath, notebookCell: NotebookCell) -> UITableViewCell {
 
@@ -112,28 +129,36 @@ extension NotebookListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
-        let alert = buildDeleteAlert {
+        let deleteAlert = buildDeleteAlert {
             self.viewModel.deleteNotebook(atIndexPath: indexPath)
             self.viewModel.refreshItems()
         }
 
-        let action = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
-            self.present(alert, animated: true)
+        let editAlert = buildEditAlert { text in
+            guard let notebookName = text else { return }
+            self.viewModel.editNotebook(for: notebookName, atIndexPath: indexPath)
+            self.viewModel.refreshItems()
         }
 
-        return UISwipeActionsConfiguration(actions: [action])
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
+            self.present(deleteAlert, animated: true)
+        }
+
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { (action, view, completionHandler) in
+            self.present(editAlert, animated: true)
+        }
+
+        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let notebookID = viewModel.objectID(forNoteAt: indexPath.row) else {
+        guard let notebookID = viewModel.objectID(forNotebookAt: indexPath.row) else {
             return
         }
-
         viewModel.displayNotes(notebookID: notebookID)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-
 
     //MARK: - Delegate
 

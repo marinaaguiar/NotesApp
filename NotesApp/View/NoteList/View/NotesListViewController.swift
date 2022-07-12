@@ -14,17 +14,18 @@ class NotesListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        viewModel.initializeCoreData()
         tableView.dataSource = self
-//        tableView.delegate = self
-
+        tableView.delegate = self
         navigationItem.rightBarButtonItem = editButtonItem
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        viewModel.initializeCoreData()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     @IBAction func addNoteButtonPressed(_ sender: Any) {
@@ -34,7 +35,8 @@ class NotesListViewController: UIViewController {
 
     func setup(notebookID: NSManagedObjectID) {
         let notebook = viewModel.setNotebook(notebookID: notebookID)
-        self.title = notebook.name
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = notebook.name
     }
 
     func addNote() {
@@ -48,6 +50,21 @@ class NotesListViewController: UIViewController {
         cell.fill(noteCell)
         cell.accessoryType = .disclosureIndicator
         return cell
+    }
+
+    func buildDeleteAlert(onDelete: @escaping () -> Void) -> UIAlertController {
+        let alert = UIAlertController(title: "Delete Note 👀", message: "Are you sure you want to delete this note permanently?", preferredStyle: .alert
+        )
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak alert] _ in
+            onDelete()
+        }
+
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+
+        return alert
     }
 
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -68,9 +85,37 @@ extension NotesListViewController: UITableViewDataSource {
 
         return cell(tableView, indexPath: indexPath, noteCell: viewModel.fillCell(atIndexPath: indexPath.row))
     }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+
+        let alert = buildDeleteAlert {
+            self.viewModel.deleteNotes(atIndexPath: indexPath)
+            self.viewModel.refreshItems()
+        }
+
+        switch editingStyle {
+        case .delete:
+            self.present(alert, animated: true)
+        default: () // Unsupported
+        }
+    }
 }
 
 //MARK: - TableViewDelegate
+
+extension NotesListViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let noteID = viewModel.objectID(forNoteAt: indexPath.row) else {
+            return
+        }
+        viewModel.displayNoteDetail(noteID: noteID)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+
+//MARK: - NotesListViewModelDelegate
 
 extension NotesListViewController: NotesListViewModelDelegate {
 
@@ -81,8 +126,11 @@ extension NotesListViewController: NotesListViewModelDelegate {
         }
     }
 
-    func displayNotes(noteID: NSManagedObjectID) {
-//        delegate?.displayNotes(noteID: noteID)
+    func displayNoteDetail(noteID: NSManagedObjectID) {
+        let noteDetailVC = storyboard?.instantiateViewController(withIdentifier: "NoteDetailViewController") as? NoteDetailViewController
+        guard let noteDetailVC = noteDetailVC else { return }
+        noteDetailVC.setup(noteID: noteID)
+        navigationController?.pushViewController(noteDetailVC, animated: true)
     }
 }
 

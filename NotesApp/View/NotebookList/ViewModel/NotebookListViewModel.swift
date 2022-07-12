@@ -7,12 +7,13 @@ protocol NotebookListViewModelProtocol: AnyObject {
     func switchSortingCondition(to sortByOldest: Bool)
     func initializeCoreData()
     func saveNewNotebook(name: String)
+    func editNotebook(for newName: String, atIndexPath indexPath: IndexPath) 
     func deleteNotebook(atIndexPath indexPath: IndexPath)
     func refreshItems()
     func numberOfRows() -> Int
     func fillCell(atIndexPath indexPath: Int) -> NotebookCell
     func displayNotes(notebookID: NSManagedObjectID)
-    func objectID(forNoteAt index: Int) -> NSManagedObjectID?
+    func objectID(forNotebookAt index: Int) -> NSManagedObjectID?
 }
 
 protocol NotebookListViewModelDelegate: AnyObject {
@@ -25,6 +26,7 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
 
     private weak var delegate: NotebookListViewModelDelegate?
     private var notebooks: [Notebook]?
+    private let storageService = DataController.shared
     internal var isSortingByOldest: Bool = false
 
     private var date = { (date: Date?) -> String in
@@ -47,9 +49,6 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
         let pageCountString = "\(count) \(pageString)"
         return pageCountString
     }
-
-    // MARK: - Services
-    private let storageService = DataController.shared
 
     init(delegate: NotebookListViewModelDelegate?) {
         self.delegate = delegate
@@ -127,7 +126,6 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
     }
 
     func deleteNotebook(atIndexPath indexPath: IndexPath) {
-
         guard let notebooks = notebooks else { return }
 
         do {
@@ -142,7 +140,21 @@ class NotebookListViewModel: NotebookListViewModelProtocol {
         }
     }
 
-    func objectID(forNoteAt index: Int) -> NSManagedObjectID? {
+    func editNotebook(for newName: String, atIndexPath indexPath: IndexPath) {
+        guard let notebooks = notebooks else { return }
+        do {
+            try storageService.performContainerAction { container in
+
+                let context = container.viewContext
+                notebooks[indexPath.row].name = newName
+                try context.save()
+            }
+        } catch {
+            print("Could not delete \(error.localizedDescription)")
+        }
+    }
+
+    func objectID(forNotebookAt index: Int) -> NSManagedObjectID? {
         return notebooks?[index].objectID
     }
 

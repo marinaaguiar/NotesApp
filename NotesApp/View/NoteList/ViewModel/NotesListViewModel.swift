@@ -9,13 +9,15 @@ protocol NotesListViewModelProtocol: AnyObject {
     func refreshItems()
     func numberOfRows() -> Int
     func fillCell(atIndexPath indexPath: Int) -> NoteCell
+    func deleteNotes(atIndexPath indexPath: IndexPath)
     func getNotebook() -> Notebook
+    func objectID(forNoteAt index: Int) -> NSManagedObjectID?
+    func displayNoteDetail(noteID: NSManagedObjectID)
 }
-
 
 protocol NotesListViewModelDelegate: AnyObject {
     func didLoad()
-    func displayNotes(noteID: NSManagedObjectID)
+    func displayNoteDetail(noteID: NSManagedObjectID)
 }
 
 class NotesListViewModel: NotesListViewModelProtocol {
@@ -35,6 +37,15 @@ class NotesListViewModel: NotesListViewModelProtocol {
         return dateString
     }
 
+    private var noteTitle = { (noteText: String?) -> String in
+        guard let noteText = noteText else {
+            print("Unable to get the noteTitle")
+            return "New Note"
+        }
+        let noteTitle = String(noteText.prefix(10))
+        return noteTitle
+    }
+
     // MARK: Services
     private let storageService = DataController.shared
 
@@ -50,7 +61,7 @@ class NotesListViewModel: NotesListViewModelProtocol {
                 //Get Notebooks from Core Data
                 self.refreshItems()
             case .failure:
-                print("failed to load stores, gosh darn it.")
+                print("failed to load stores")
             }
         }
     }
@@ -59,10 +70,10 @@ class NotesListViewModel: NotesListViewModelProtocol {
         do {
             try storageService.performContainerAction { container in
                 let context = container.viewContext
-
+                
                 // Create a Note object
                 let newNote = Note(context: context)
-                newNote.text = "New Note"
+                newNote.attributedText = NSAttributedString(string: "New Note")
                 newNote.creationDate = Date()
                 newNote.notebook = notebook
 
@@ -101,14 +112,12 @@ class NotesListViewModel: NotesListViewModelProtocol {
     }
 
     func fillCell(atIndexPath indexPath: Int) -> NoteCell {
-
-
         guard let notes = notes else {
             return NoteCell(noteName: "", creationDate: "")
         }
 
         let note = notes[indexPath]
-        let noteName = note.text
+        let noteName = noteTitle(note.attributedText?.string)
         let noteCreationDate = date(note.creationDate)
 
         return NoteCell(noteName: noteName, creationDate: noteCreationDate)
@@ -124,12 +133,39 @@ class NotesListViewModel: NotesListViewModelProtocol {
 
         return notebook
     }
+    func deleteNotes(atIndexPath indexPath: IndexPath) {
+
+        guard let notes = notes else { return }
+
+        do {
+            try storageService.performContainerAction { container in
+
+                let context = container.viewContext
+                context.delete(notes[indexPath.row])
+                try context.save()
+            }
+        } catch {
+            print("Could not delete \(error.localizedDescription)")
+        }
+    }
 
     func getNotebook() -> Notebook {
         return notebook
     }
 
     func transporter(index: Int) -> String {
-        notes![index].text!
+        guard let notes = notes else {
+            fatalError("Unable to fetch Notes")
+            return ""
+        }
+        return notes[index].attributedText!.string
+    }
+
+    func objectID(forNoteAt index: Int) -> NSManagedObjectID? {
+        return notes?[index].objectID
+    }
+
+    func displayNoteDetail(noteID: NSManagedObjectID) {
+        delegate?.displayNoteDetail(noteID: noteID)
     }
 }

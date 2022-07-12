@@ -2,7 +2,7 @@
 import UIKit
 
 struct NoteCell {
-    let noteName: String?
+    let noteName: String
     let creationDate: String?
 }
 
