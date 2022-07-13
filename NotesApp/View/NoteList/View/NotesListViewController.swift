@@ -35,15 +35,6 @@ class NotesListViewController: UIViewController {
         viewModel.refreshItems()
         let noteID = viewModel.objectID()
         viewModel.displayNoteDetail(noteID: noteID)
-
-        //        guard let noteID = viewModel.objectID() else {
-//            return
-//        }
-//        viewModel.displayNoteDetail(noteID: noteID)
-
-//        let noteDetailVC = storyboard?.instantiateViewController(withIdentifier: "NoteDetailViewController") as? NoteDetailViewController
-//        guard let noteDetailVC = noteDetailVC else { return }
-//        navigationController?.pushViewController(noteDetailVC, animated: true)
     }
 
     func setup(notebookID: NSManagedObjectID) {
