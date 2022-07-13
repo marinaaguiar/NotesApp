@@ -32,6 +32,10 @@ class NotesListViewController: UIViewController {
     @IBAction func addNoteButtonPressed(_ sender: Any) {
         viewModel.saveNewNote()
         viewModel.refreshItems()
+        let noteDetailVC = storyboard?.instantiateViewController(withIdentifier: "NoteDetailViewController") as? NoteDetailViewController
+        guard let noteDetailVC = noteDetailVC else { return }
+        navigationController?.pushViewController(noteDetailVC, animated: true)
+
     }
 
     func setup(notebookID: NSManagedObjectID) {

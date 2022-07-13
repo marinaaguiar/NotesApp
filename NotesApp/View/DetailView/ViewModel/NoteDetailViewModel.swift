@@ -10,6 +10,7 @@ protocol NoteDetailViewModelProtocol: AnyObject {
     func objectID(forNoteAt index: Int) -> NSManagedObjectID?
     func setNote(noteID: NSManagedObjectID) -> Note
     func getNote() -> NSAttributedString
+    func deleteNote()
 }
 
 protocol NoteDetailViewModelDelegate: AnyObject {
@@ -70,6 +71,9 @@ class NoteDetailViewModel: NoteDetailViewModelProtocol {
     }
 
     func getNote() -> NSAttributedString {
+        guard let note = note else {
+            return NSAttributedString(string: "")
+        }
         print(note.attributedText?.string ?? "")
         return note.attributedText ?? NSAttributedString(string: "")
     }
@@ -85,5 +89,18 @@ class NoteDetailViewModel: NoteDetailViewModelProtocol {
             self.note = note
         }
         return note
+    }
+
+    func deleteNote() {
+        do {
+            try storageService.performContainerAction { container in
+
+                let context = container.viewContext
+                context.delete(note)
+                try context.save()
+            }
+        } catch {
+            print("Could not delete \(error.localizedDescription)")
+        }
     }
 }

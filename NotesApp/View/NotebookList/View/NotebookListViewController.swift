@@ -31,11 +31,11 @@ class NotebookListViewController: UIViewController {
 
     @IBAction func sortButtonPressed(_ sender: UIBarButtonItem) {
         if viewModel.isSortingByOldest == false {
-            sortingButton.tintColor = .systemGray4
+            sortingButton.image = UIImage(named: "UnsortedIcon")
             viewModel.switchSortingCondition(to: true)
             viewModel.initializeCoreData()
         } else {
-            sortingButton.tintColor = .systemCyan
+            sortingButton.image = UIImage(named: "SortedIcon")
             viewModel.switchSortingCondition(to: false)
             viewModel.initializeCoreData()
         }
