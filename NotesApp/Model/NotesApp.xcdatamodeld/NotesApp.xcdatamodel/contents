@@ -3,6 +3,7 @@
     <entity name="Note" representedClassName="Note" syncable="YES" codeGenerationType="class">
         <attribute name="attributedText" optional="YES" attributeType="Transformable" customClassName="NSAttributedString"/>
         <attribute name="creationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastModifiedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="notebook" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Notebook" inverseName="notes" inverseEntity="Notebook"/>
     </entity>
@@ -12,7 +13,7 @@
         <relationship name="notes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Note" inverseName="notebook" inverseEntity="Note"/>
     </entity>
     <elements>
-        <element name="Note" positionX="-18" positionY="45" width="128" height="89"/>
+        <element name="Note" positionX="-18" positionY="45" width="128" height="104"/>
         <element name="Notebook" positionX="-45" positionY="0" width="128" height="74"/>
     </elements>
 </model>

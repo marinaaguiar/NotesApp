@@ -63,6 +63,7 @@ class NoteDetailViewModel: NoteDetailViewModelProtocol {
 
                 let context = container.viewContext
                 note.attributedText = content.attributedText
+                note.lastModifiedDate = Date()
                 try context.save()
             }
         } catch {

@@ -9,6 +9,7 @@ class NotebookListViewController: UIViewController {
     // MARK: Table
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortingButton: UIBarButtonItem!
+    @IBOutlet weak var startingLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +46,15 @@ class NotebookListViewController: UIViewController {
         title = "Notebooks"
         tableView.dataSource = self
         tableView.delegate = self
+
+        if viewModel.numberOfRows() == 0 {
+            tableView.isHidden = true
+            startingLabel.isHidden = false
+            startingLabel.text = "Hi there! 👋🏽 \n \n There is no notebook created 😊"
+        } else {
+            tableView.isHidden = false
+            startingLabel.isHidden = true
+        }
     }
 
     func cell(_ tableView: UITableView, indexpath: IndexPath, notebookCell: NotebookCell) -> UITableViewCell {

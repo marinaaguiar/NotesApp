@@ -35,7 +35,6 @@ class NotesListViewController: UIViewController {
         let noteDetailVC = storyboard?.instantiateViewController(withIdentifier: "NoteDetailViewController") as? NoteDetailViewController
         guard let noteDetailVC = noteDetailVC else { return }
         navigationController?.pushViewController(noteDetailVC, animated: true)
-
     }
 
     func setup(notebookID: NSManagedObjectID) {

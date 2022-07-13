@@ -26,14 +26,21 @@ class NotesListViewModel: NotesListViewModelProtocol {
     private var notebook: Notebook!
     private var notes: [Note]?
 
-    private var date = { (date: Date?) -> String in
-        guard let date = date else {
+    private var date = { (dateCreated: Date?, dateLastModified: Date?) -> String in
+        guard let dateCreated = dateCreated, let dateLastModified = dateLastModified else {
             print("Unable to get the date")
             return ""
         }
+        var dateString: String = ""
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "hh:mm a MMM d, yyyy"
-        let dateString = dateFormatter.string(from: date)
+        dateFormatter.dateFormat = "MMM d, yyyy - hh:mm a"
+
+        if dateCreated == dateLastModified {
+            dateString = "Created at \(dateFormatter.string(from: dateCreated))"
+        } else {
+            dateString = "Last modified at \(dateFormatter.string(from: dateLastModified))"
+        }
+
         return dateString
     }
 
@@ -75,6 +82,7 @@ class NotesListViewModel: NotesListViewModelProtocol {
                 let newNote = Note(context: context)
                 newNote.title = "New Note"
                 newNote.creationDate = Date()
+                newNote.lastModifiedDate = newNote.creationDate
                 newNote.notebook = notebook
 
                 // Save the data
@@ -92,7 +100,7 @@ class NotesListViewModel: NotesListViewModelProtocol {
         let predicate = NSPredicate(format: "notebook = %@", notebook)
         request.predicate = predicate
 
-        let sort = NSSortDescriptor(key: "creationDate", ascending: false)
+        let sort = NSSortDescriptor(key: "lastModifiedDate", ascending: false)
         request.sortDescriptors = [sort]
 
         do {
@@ -113,7 +121,7 @@ class NotesListViewModel: NotesListViewModelProtocol {
 
     func fillCell(atIndexPath indexPath: Int) -> NoteCell {
         guard let notes = notes else {
-            return NoteCell(noteTitle: "", creationDate: "")
+            return NoteCell(noteTitle: "", lastModifiedDate: "")
         }
         var noteTitle: String = ""
 
@@ -124,9 +132,9 @@ class NotesListViewModel: NotesListViewModelProtocol {
             noteTitle = noteTitleString(note.attributedText)
         }
 
-        let noteCreationDate = date(note.creationDate)
+        let noteDate = date(note.creationDate, note.lastModifiedDate)
 
-        return NoteCell(noteTitle: noteTitle, creationDate: noteCreationDate)
+        return NoteCell(noteTitle: noteTitle, lastModifiedDate: noteDate)
     }
 
     func setNotebook(notebookID: NSManagedObjectID) -> Notebook {
