@@ -11,7 +11,13 @@ class NoteDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.delegate = self
-        textView.attributedText = viewModel.getNote()
+
+        if viewModel.getNote() != nil {
+            textView.attributedText = viewModel.getNote()
+        } else {
+            textView.attributedText = NSAttributedString(string: "")
+        }
+
         addDoneButton()
     }
 

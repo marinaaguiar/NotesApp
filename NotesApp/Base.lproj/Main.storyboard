@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Pi-q9-fpY">
-                                <rect key="frame" x="12" y="438" width="390" height="20.5"/>
+                                <rect key="frame" x="12" y="175" width="390" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -100,7 +100,7 @@
                             <constraint firstItem="8Pi-q9-fpY" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="UqJ-SV-w1e"/>
                             <constraint firstAttribute="bottom" secondItem="Rps-0o-HFW" secondAttribute="bottom" constant="24" id="WSZ-PN-hm6"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="yql-tT-Xwv" secondAttribute="bottom" id="WXM-Nd-Har"/>
-                            <constraint firstItem="8Pi-q9-fpY" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ikA-nD-VFh"/>
+                            <constraint firstItem="8Pi-q9-fpY" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="35" id="bBQ-1f-pYL"/>
                             <constraint firstItem="8Pi-q9-fpY" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="12" id="shM-qN-Ixv"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8Pi-q9-fpY" secondAttribute="trailing" constant="12" id="xRE-ND-qoq"/>
                         </constraints>
@@ -115,8 +115,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="sortingButton" destination="i2e-aN-Fnr" id="mXl-JO-hYv"/>
-                        <outlet property="startingLabel" destination="8Pi-q9-fpY" id="izs-Ri-iay"/>
                         <outlet property="tableView" destination="yql-tT-Xwv" id="N5b-eb-x9U"/>
+                        <outlet property="welcomeLabel" destination="8Pi-q9-fpY" id="izs-Ri-iay"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

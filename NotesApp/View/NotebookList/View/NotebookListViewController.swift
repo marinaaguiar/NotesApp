@@ -1,5 +1,6 @@
 
 import UIKit
+import AVFoundation
 import CoreData
 
 class NotebookListViewController: UIViewController {
@@ -9,11 +10,18 @@ class NotebookListViewController: UIViewController {
     // MARK: Table
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortingButton: UIBarButtonItem!
-    @IBOutlet weak var startingLabel: UILabel!
+    @IBOutlet weak var welcomeLabel: UILabel!
+
+    private var player: AVPlayer!
+    private var layer: AVPlayerLayer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
+
+        player = AVPlayer(url: URL(fileURLWithPath: Bundle.main.path(forResource: "NotebookVideo", ofType: "mp4")!))
+        layer = AVPlayerLayer(player: player)
+
+        view.layer.addSublayer(layer)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -22,6 +30,9 @@ class NotebookListViewController: UIViewController {
     }
 
     @IBAction func addNotebookButtonPressed(_ sender: UIBarButtonItem) {
+
+        welcomeLabel.isHidden = true
+        presentNotebookGif(false)
         let alert = buildNotebookNameAlert { text in
             guard let notebookName = text else { return }
             self.viewModel.saveNewNotebook(name: notebookName)
@@ -49,11 +60,28 @@ class NotebookListViewController: UIViewController {
 
         if viewModel.numberOfRows() == 0 {
             tableView.isHidden = true
-            startingLabel.isHidden = false
-            startingLabel.text = "Hi there! 👋🏽 \n \n There is no notebook created 😊"
+            presentNotebookGif(true)
+            welcomeLabel.isHidden = false
+            welcomeLabel.text = "Hi there! 👋🏽 \n \n There is no notebook created yet 😊"
+            sortingButton.isEnabled = false
         } else {
             tableView.isHidden = false
-            startingLabel.isHidden = true
+            sortingButton.isEnabled = true
+            presentNotebookGif(false)
+            welcomeLabel.isHidden = true
+        }
+    }
+
+    func presentNotebookGif(_ play: Bool) {
+
+        layer.frame = view.bounds
+
+        if play {
+            player.play()
+            layer.isHidden = false
+        } else {
+            player.pause()
+            layer.isHidden = true
         }
     }
 
@@ -76,7 +104,9 @@ extension NotebookListViewController {
             preferredStyle: .alert
         )
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {_ in 
+            self.viewModel.refreshItems()
+        }
         let saveAction = UIAlertAction(title: "Save", style: .default) { [weak alert] _ in
             if alert?.textFields?.first?.text != "" {
                 onSave(alert?.textFields?.first?.text)
@@ -181,6 +211,7 @@ extension NotebookListViewController: NotebookListViewModelDelegate {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.tableView.reloadData()
+            self.setup()
         }
     }
 

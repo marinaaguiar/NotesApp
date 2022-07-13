@@ -12,6 +12,7 @@ protocol NotesListViewModelProtocol: AnyObject {
     func deleteNotes(atIndexPath indexPath: IndexPath)
     func getNotebook() -> Notebook
     func objectID(forNoteAt index: Int) -> NSManagedObjectID?
+    func objectID() -> NSManagedObjectID
     func displayNoteDetail(noteID: NSManagedObjectID)
 }
 
@@ -177,6 +178,10 @@ class NotesListViewModel: NotesListViewModelProtocol {
 
     func objectID(forNoteAt index: Int) -> NSManagedObjectID? {
         return notes?[index].objectID
+    }
+
+    func objectID() -> NSManagedObjectID {
+        return (notes?.first?.objectID)!
     }
 
     func displayNoteDetail(noteID: NSManagedObjectID) {
