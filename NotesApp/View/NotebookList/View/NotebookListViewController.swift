@@ -54,7 +54,6 @@ class NotebookListViewController: UIViewController {
     }
 
     func setup() {
-        title = "Notebooks"
         tableView.dataSource = self
         tableView.delegate = self
 
@@ -64,7 +63,9 @@ class NotebookListViewController: UIViewController {
             welcomeLabel.isHidden = false
             welcomeLabel.text = "Hi there! 👋🏽 \n \n There is no notebook created yet 😊"
             sortingButton.isEnabled = false
+            title = ""
         } else {
+            title = "Notebook"
             tableView.isHidden = false
             sortingButton.isEnabled = true
             presentNotebookGif(false)
@@ -104,7 +105,7 @@ extension NotebookListViewController {
             preferredStyle: .alert
         )
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {_ in 
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {_ in
             self.viewModel.refreshItems()
         }
         let saveAction = UIAlertAction(title: "Save", style: .default) { [weak alert] _ in
