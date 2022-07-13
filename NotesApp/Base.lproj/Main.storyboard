@@ -121,7 +121,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="UeQ-oQ-nO0">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="NoteViewCell" id="SRv-Vd-Cqv" customClass="NoteViewCell" customModule="NotesApp" customModuleProvider="target">
@@ -183,11 +183,11 @@
                         <viewLayoutGuide key="safeArea" id="85G-Ak-0sj"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="85G-Ak-0sj" firstAttribute="bottom" secondItem="UeQ-oQ-nO0" secondAttribute="bottom" id="8Bb-R1-fHE"/>
+                            <constraint firstAttribute="bottom" secondItem="UeQ-oQ-nO0" secondAttribute="bottom" id="8Bb-R1-fHE"/>
                             <constraint firstItem="UeQ-oQ-nO0" firstAttribute="leading" secondItem="85G-Ak-0sj" secondAttribute="leading" id="Hxa-Zb-1me"/>
                             <constraint firstItem="85G-Ak-0sj" firstAttribute="trailing" secondItem="UeQ-oQ-nO0" secondAttribute="trailing" id="WYo-ev-3Mg"/>
                             <constraint firstItem="Ca6-t2-7ss" firstAttribute="trailing" secondItem="85G-Ak-0sj" secondAttribute="trailing" id="fDP-pX-Qrj"/>
-                            <constraint firstItem="UeQ-oQ-nO0" firstAttribute="top" secondItem="85G-Ak-0sj" secondAttribute="top" id="smp-yS-fnl"/>
+                            <constraint firstItem="UeQ-oQ-nO0" firstAttribute="top" secondItem="S1y-c7-IXg" secondAttribute="top" id="smp-yS-fnl"/>
                             <constraint firstAttribute="bottom" secondItem="Ca6-t2-7ss" secondAttribute="bottom" constant="24" id="vVX-Qu-rVn"/>
                             <constraint firstItem="Ca6-t2-7ss" firstAttribute="leading" secondItem="85G-Ak-0sj" secondAttribute="leading" id="zUy-Jw-2bA"/>
                         </constraints>
@@ -195,13 +195,14 @@
                     <navigationItem key="navigationItem" id="zSS-EK-nsE">
                         <barButtonItem key="backBarButtonItem" title="Back" id="z58-kL-gzS"/>
                     </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="tableView" destination="UeQ-oQ-nO0" id="Nht-mU-NFz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7yX-fj-PcK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2411.594202898551" y="69.642857142857139"/>
+            <point key="canvasLocation" x="1425" y="70"/>
         </scene>
         <!--Note Detail View Controller-->
         <scene sceneID="1p4-1v-5Hl">
@@ -211,7 +212,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="sdfdsdfsfd" translatesAutoresizingMaskIntoConstraints="NO" id="gGv-nq-kOr">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="this is a test" translatesAutoresizingMaskIntoConstraints="NO" id="gGv-nq-kOr">
                                 <rect key="frame" x="12" y="88" width="390" height="762"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="textColor" systemColor="labelColor"/>
@@ -235,13 +236,14 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="textView" destination="gGv-nq-kOr" id="z26-qr-cLr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0oK-b0-aZY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4106" y="70"/>
+            <point key="canvasLocation" x="2061" y="70"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="aXE-ea-WsM">
@@ -260,42 +262,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z7u-ux-zeC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="28.985507246376812" y="69.642857142857139"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="Vdp-QC-Dhr">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="0sh-ra-8K2" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="6sz-Um-tWq">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="zTF-bT-AZX" kind="relationship" relationship="rootViewController" id="w0B-4B-BLe"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="j85-K3-Ebo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1617" y="70"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="abM-R5-k4Q">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="RVf-DT-L3S" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="TRG-ya-SMg">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="fQW-ri-mW2" kind="relationship" relationship="rootViewController" id="Gry-ea-y16"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="fcK-wi-5Qa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3316" y="70"/>
         </scene>
     </scenes>
     <resources>
