@@ -7,6 +7,7 @@ class NotesListViewController: UIViewController {
     private lazy var viewModel: NotesListViewModelProtocol = NotesListViewModel(delegate: self)
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var emptyNotesMessageLabel: UILabel!
 
     // MARK: Services
     let storageService = DataController.shared
@@ -23,6 +24,7 @@ class NotesListViewController: UIViewController {
         super.viewWillAppear(true)
         viewModel.initializeCoreData()
         viewModel.refreshItems()
+        tableView.reloadData()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -41,6 +43,18 @@ class NotesListViewController: UIViewController {
         let notebook = viewModel.setNotebook(notebookID: notebookID)
         navigationController?.navigationBar.prefersLargeTitles = true
         title = notebook.name
+    }
+
+    func emptyNotesMessage() {
+        if viewModel.numberOfRows() == 0 {
+            tableView.isHidden = true
+            title = ""
+            emptyNotesMessageLabel.text = "Oh no! 👀 There is no notes created yet... \n \n Please add a new note right there 👇🏽"
+        } else {
+            title = viewModel.getNotebook().name
+            emptyNotesMessageLabel.text = ""
+            tableView.isHidden = false
+        }
     }
 
     func cell(_ tableView: UITableView, indexPath: IndexPath, noteCell: NoteCell) -> UITableViewCell {
@@ -123,6 +137,7 @@ extension NotesListViewController: UITableViewDelegate {
 extension NotesListViewController: NotesListViewModelDelegate {
 
     func didLoad() {
+        emptyNotesMessage()
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.tableView.reloadData()
